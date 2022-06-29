@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  categoryservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "80"
+      - "51493:80"
+  Categorydb:
+    container_name: Category
+    environment:
+        SA_PASSWORD: "bluesky!3521827"
+        ACCEPT_EULA: "Y"
+    ports:
+        - "1401:1433"
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15673:15672
+    volumes:
+        - rabbitmqdata:/var/lib/rabbitmq
+    hostname: rabbitmq
+
+volumes:
+  rabbitmqdata:
+  
+    

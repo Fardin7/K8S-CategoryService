@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  categoryservice:
+    image: ${DOCKER_REGISTRY-}categoryservice
+    build:
+      context: .
+      dockerfile: CategoryService/Dockerfile
+  Categorydb:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+
+  rabbitmq:
+    image: rabbitmq:management
