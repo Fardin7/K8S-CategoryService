@@ -1,12 +1,13 @@
-﻿using CategoryService.Dtos;
+﻿using CategoryService.Contract;
+
 namespace CategoryService.Data
 {
     public interface IRepository
     {
-        Task<NewsCategoryReadDto> Add(NewsCategoryCreateDto newsCategoryCreate);
-        Task<NewsCategoryReadDto> Update(NewsCategoryCreateDto newsCategoryCreate);
-        Task<NewsCategoryReadDto> GetById(int id);
-        Task<IEnumerable<NewsCategoryReadDto>> Get();
-        void Remove(NewsCategoryReadDto newsCategoryRead);
+        Task<NewsCategoryRead> Add(NewsCategoryCreate newsCategoryCreate);
+        Task<NewsCategoryRead> Update(NewsCategoryCreate newsCategoryCreate);
+        Task<NewsCategoryRead> GetById(int id);
+        Task<IEnumerable<NewsCategoryRead>> Get();
+        void Remove(NewsCategoryRead newsCategoryRead);
     }
 }

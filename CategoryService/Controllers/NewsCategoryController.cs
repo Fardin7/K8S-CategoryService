@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CategoryService.Data;
 using CategoryService.NewsClient;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using CategoryService.Dtos;
+using CategoryService.Contract;
+using CategoryService.AsyncConnection;
 
 namespace CategoryService.Controllers
 {
@@ -14,14 +14,15 @@ namespace CategoryService.Controllers
         private readonly IRepository _repository;
         private readonly IClientUpdate _newsServiceUpdate;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly INotification _notification;
 
-        public NewsCategoryController(IRepository repository, IClientUpdate newsServiceUpdate, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public NewsCategoryController(IRepository repository, IClientUpdate newsServiceUpdate, IMapper mapper
+            ,INotification notification)
         {
             _repository = repository;
             _newsServiceUpdate = newsServiceUpdate;
             _mapper = mapper;
-            _publishEndpoint = publishEndpoint;
+            _notification = notification;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -44,11 +45,16 @@ namespace CategoryService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(NewsCategoryCreateDto newsCategoryCreate)
+        public async Task<IActionResult> Add(NewsCategoryCreate newsCategoryCreate)
         {
             var categoriy = await _repository.Add(newsCategoryCreate);
+            Console.WriteLine("CategoryCreate has been added.......!");
 
-          //  await _publishEndpoint.Publish(_mapper.Map<NewsCategoryCreate>(categoriy));
+            var NewsCategory = _mapper.Map<NewsCategoryCreate>(categoriy);
+
+           // await _newsServiceUpdate.Notify(NewsCategory);
+
+            await _notification.CreateNotify(NewsCategory);
 
             if (categoriy != null)
             {
@@ -57,19 +63,16 @@ namespace CategoryService.Controllers
             return BadRequest();
         }
         [HttpPut]
-        public async Task<IActionResult> Update(NewsCategoryCreateDto newsCategoryCreate)
+        public async Task<IActionResult> Update(NewsCategoryCreate newsCategoryCreate)
         {
             var categoriy = await _repository.GetById(newsCategoryCreate.Id);
             if (categoriy == null)
             {
                 categoriy = await _repository.Add(newsCategoryCreate);
-
-               // await _publishEndpoint.Publish(_mapper.Map<NewsCategoryCreate>(newsCategoryCreate));
             }
             else
             {
                 categoriy = await _repository.Update(newsCategoryCreate);
-               // await _publishEndpoint.Publish(_mapper.Map<NewsCategoryUpdate>(newsCategoryCreate));
             }
 
             return CreatedAtAction(nameof(Get), new { categoriy.Id }, categoriy);
@@ -86,8 +89,6 @@ namespace CategoryService.Controllers
             }
 
             _repository.Remove(categoriy);
-
-           // await _publishEndpoint.Publish(_mapper.Map<NewsCategoryDelete>(categoriy));
 
             return NoContent();
         }

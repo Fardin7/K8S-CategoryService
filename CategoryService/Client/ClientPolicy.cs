@@ -27,7 +27,7 @@ namespace CategoryService.Client
 
             circutBreakerPolicy = HttpPolicyExtensions
                .HandleTransientHttpError()
-               .CircuitBreakerAsync(3, TimeSpan.FromSeconds(10));
+               .CircuitBreakerAsync(1, TimeSpan.FromSeconds(3));
 
             timeoutPolicyPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(2));
 

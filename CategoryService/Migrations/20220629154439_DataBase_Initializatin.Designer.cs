@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CategoryService.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20220617130414_Modify-Table-Name")]
-    partial class ModifyTableName
+    [Migration("20220629154439_DataBase_Initializatin")]
+    partial class DataBase_Initializatin
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

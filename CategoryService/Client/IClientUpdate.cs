@@ -1,9 +1,9 @@
-﻿using CategoryService.Dtos;
+﻿using CategoryService.Contract;
 
 namespace CategoryService.NewsClient
 {
     public interface IClientUpdate
     {
-        Task<HttpResponseMessage> Notify(NewsCategoryCreateDto newsCategoryRead);
+        Task<HttpResponseMessage> Notify(NewsCategoryCreate newsCategoryRead);
     }
 }

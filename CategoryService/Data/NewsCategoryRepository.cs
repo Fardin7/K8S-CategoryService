@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CategoryService.Dtos;
+using CategoryService.Contract;
 using CategoryService.Model;
 using Microsoft.EntityFrameworkCore;
 namespace CategoryService.Data
@@ -14,41 +14,43 @@ namespace CategoryService.Data
             _appDbContext = appDBContext;
             _mapper = mapper;
         }
-        public async Task<NewsCategoryReadDto> Add(NewsCategoryCreateDto newsCategoryCreate)
+        public async Task<NewsCategoryRead> Add(NewsCategoryCreate newsCategoryCreate)
         {
             var newsCategory = _mapper.Map<NewsCategory>(newsCategoryCreate);
 
             await _appDbContext.NewsCategory.AddAsync(newsCategory);
 
+           
+
             _appDbContext.SaveChanges();
 
-            return _mapper.Map<NewsCategoryReadDto>(newsCategory);
+            return _mapper.Map<NewsCategoryRead>(newsCategory);
         }
-        public async Task<IEnumerable<NewsCategoryReadDto>> Get()
+        public async Task<IEnumerable<NewsCategoryRead>> Get()
         {
             var newsCategories = await _appDbContext.NewsCategory.ToListAsync();
 
-            var result = new List<NewsCategoryReadDto>();
+            var result = new List<NewsCategoryRead>();
             newsCategories.ForEach(q =>
             {
-                result.Add(_mapper.Map<NewsCategoryReadDto>(q));
+                result.Add(_mapper.Map<NewsCategoryRead>(q));
             });
 
             return result;
         }
-        public async Task<NewsCategoryReadDto> GetById(int id)
+        public async Task<NewsCategoryRead> GetById(int id)
         {
             var newsCategory = await _appDbContext.NewsCategory.FindAsync(id);
 
-            return _mapper.Map<NewsCategoryReadDto>(newsCategory);
+            return _mapper.Map<NewsCategoryRead>(newsCategory);
         }
-        public void Remove(NewsCategoryReadDto newsCategoryRead)
+        public void Remove(NewsCategoryRead newsCategoryRead)
         {
             _appDbContext.NewsCategory.Remove(_mapper.Map<NewsCategory>(newsCategoryRead));
 
             _appDbContext.SaveChanges();
         }
-        public async Task<NewsCategoryReadDto> Update(NewsCategoryCreateDto newsCategoryCreate)
+        public async Task<NewsCategoryRead> Update(NewsCategoryCreate newsCategoryCreate)
         {
             var category = await _appDbContext.NewsCategory.FindAsync(newsCategoryCreate.Id);
 
@@ -57,7 +59,7 @@ namespace CategoryService.Data
 
             await _appDbContext.SaveChangesAsync();
 
-            return _mapper.Map<NewsCategoryReadDto>(category);
+            return _mapper.Map<NewsCategoryRead>(category);
         }
     }
 }
