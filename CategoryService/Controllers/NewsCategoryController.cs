@@ -45,10 +45,14 @@ namespace CategoryService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(NewsCategoryCreate newsCategoryCreate)
+        public async Task<ActionResult<NewsCategoryRead>> Add(NewsCategoryCreate newsCategoryCreate)
         {
             var categoriy = await _repository.Add(newsCategoryCreate);
-            Console.WriteLine("CategoryCreate has been added.......!");
+
+            if (categoriy is null)
+            {
+                return BadRequest();
+            }
 
             var NewsCategory = _mapper.Map<NewsCategoryCreate>(categoriy);
 
@@ -56,14 +60,10 @@ namespace CategoryService.Controllers
 
             await _notification.CreateNotify(NewsCategory);
 
-            if (categoriy != null)
-            {
-                return CreatedAtAction(nameof(Get), new { categoriy.Id }, categoriy);
-            }
-            return BadRequest();
+            return CreatedAtAction(nameof(Get), new { categoriy.Id }, categoriy);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(NewsCategoryCreate newsCategoryCreate)
+        public async Task<ActionResult<NewsCategoryRead>> Update(NewsCategoryCreate newsCategoryCreate)
         {
             var categoriy = await _repository.GetById(newsCategoryCreate.Id);
             if (categoriy == null)
@@ -79,7 +79,7 @@ namespace CategoryService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var categoriy = await _repository.GetById(id);
 
